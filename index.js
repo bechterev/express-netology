@@ -11,6 +11,7 @@ const indexRouter = require('./Routes/index');
 
 
 
+
 const app = express();
 app.use(express.json());
 app.use(express.urlencoded({
@@ -29,6 +30,6 @@ app.use(express.static("public/img"))
 
 const PORT = process.env.PORT || 3000;
 
-app.listen(port, ()=>{
-    console.log(`app start from port ${port}`)
+app.listen(PORT, ()=>{
+    console.log(`app start from port ${PORT}`)
 })
