@@ -27,7 +27,7 @@ app.use('/api/user',userApiRouter);
 app.set('view engine','ejs');
 app.use(express.static("public/img"))
 
-const port = 3000;
+const PORT = process.env.PORT || 3000;
 
 app.listen(port, ()=>{
     console.log(`app start from port ${port}`)
