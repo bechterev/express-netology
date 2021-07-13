@@ -4,6 +4,10 @@ const express = require('express');
 const Book = require('../models/entity');
 const router = express.Router();
 const fileMW = require('../middleware/file');
+const redis = require('redis');
+
+const REDIS_URL = process.env.REDIS_URL || 'localhost';
+const client = redis.createClient(`redis://${REDIS_URL}`);
 
 const listBook = [];
 [1, 2, 3].map(el => {
@@ -52,11 +56,24 @@ router.post('/create', fileMW.single('filecover'), (req, res) => {
 router.get('/:id', (req, res) => {
     const { id } = req.params;
     const book = listBook.find(el => el.search_id(id));
+    console.log(id,'this id')
     if (book !== undefined) {
-        res.render("books/view", {
-            title: "Book | view",
-            book: book
+        let count =0;
+         client.incr(id, (err,rep)=>{
+            if(err){
+                res.status(500).json({err:`redis main error: ${err}`});
+            }
+            else { 
+                count = rep;
+                res.render("books/view", {
+                    title: "Book | view",
+                    book: book,
+                    counter: count
+                })
+            
+        }
         })
+
     }
     else {
         res.status(404);
