@@ -6,8 +6,11 @@ const router = express.Router();
 const fileMW = require('../middleware/file');
 const redis = require('redis');
 
-const REDIS_URL = process.env.REDIS_URL || 'localhost';
-const client = redis.createClient(`redis://${REDIS_URL}`);
+const REDIS_URL = process.env.REDIS_URL ;
+let client;
+if(REDIS_URL)
+ client = redis.createClient(`redis://${REDIS_URL}`);
+ else client =redis.createClient();
 
 const listBook = [];
 [1, 2, 3].map(el => {
