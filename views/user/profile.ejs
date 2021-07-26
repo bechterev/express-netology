@@ -1,0 +1,11 @@
+<%- include("../partials/layout-start", {title: title}) %>
+<%- include("../partials/menu") %>
+
+<div class="container">
+    <div class="row">
+        <p><span class="badge badge-primary">Login: </span><%= user.login %></p>
+        <p><span class="badge badge-primary">Email: </span><%= user.email %></p>   
+    </div>
+</div>
+
+<%- include("../partials/layout-end") %>
