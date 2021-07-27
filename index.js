@@ -20,7 +20,7 @@ const session = require('express-session');
 
 function verify(username, password, done) {
     User.findOne({login:username},function(err, user){
-      console.log(user)
+      console.log(user,'23')
       if(user === null) {return done(null,false,{message:`user not found`});
       }
       if(bcrypt.compareSync(password, user.password)){
@@ -31,7 +31,7 @@ function verify(username, password, done) {
       return  done(null, false,{message:`login or password failed`});
       }                    
     })
-     
+    
 
 }
 
@@ -46,17 +46,15 @@ passport.use('local', new LocalStrategy(options, verify))
 
 // Конфигурирование Passport для сохранения пользователя в сессии
 passport.serializeUser(function (user, cb) {
-  console.log(user, 'ser');
    cb(null, user.id)
 })
 
 passport.deserializeUser(function (id, cb) {
-  console.log(id, 'deser');
+  
   User.findById(id).then(data=>{
-    console.log(data)
     if(data===null) return cb(null);
-    else return cb(null, data)
-  });
+    else return cb(null, id)
+ });
 
 })
 
@@ -68,14 +66,17 @@ app.use(express.urlencoded({
   extended: true
 }));
 app.use(session({
-  secret: false,
-  resave: true,
-  saveUninitialized: true,
+  secret: 'user',
+  resave: false,
+  saveUninitialized: false,
 }))
 app.use(passport.initialize())
 app.use(passport.session())
+app.set('view engine', 'ejs');
+app.use(express.static("public/img"))
 app.use('/', indexRouter)
 app.use('/user', userRouter);
+
 
 
 app.use('/books', bookRouter);
@@ -84,8 +85,7 @@ app.use('/api/book', bookApiRouter);
 app.use('/api/user', userApiRouter);
 
 
-app.set('view engine', 'ejs');
-app.use(express.static("public/img"))
+
 
 
 

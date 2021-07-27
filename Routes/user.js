@@ -33,7 +33,8 @@ router.post('/signup',async(req,res)=>{
     const newUser = new User({login:login, email: email, password:hash});
     try{
         await newUser.save();
-        res.status(200).json(`add new user`);
+        
+        res.redirect('/user/login')
     }
     catch(err){
         res.status(404).json(`user not add because error: ${err}`);
@@ -41,29 +42,25 @@ router.post('/signup',async(req,res)=>{
     }
     
 })
-router.get('/me',/* async(req,res)=>{
-    
-    const user = req.cookies;
-    try{
-        console.log(user,'uid')
-        const user = await User.findById(user._id);
-        res.render('user/profile',{title:'Profile', user:user})
-    }
-    catch(err){
-        res.status(404).json('information not found');
-    }
-}*/  function (req, res, next) {
-    console.log(req.session,'ses')
+router.get('/me',function (req, res, next) {
     if (!req.isAuthenticated || !req.isAuthenticated()) {
         if (req.session) {
           req.session.returnTo = req.originalUrl || req.url
         }
-        return res.redirect('/login')
+        
       }
       next()
     },
-    function (req, res) {
-      res.render('profile', { user: req.user })
+     function (req, res) {
+      try{
+        User.findById(req.session.passport.user).then(user=>{
+        res.render('user/profile',{title:'Profile', user:user})
+       })
+      }
+      catch(err){
+        console.log(err);
+        return res.redirect('/user/login')
+      }
     }
 )
 async function genPass(pass){
