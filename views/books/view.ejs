@@ -27,5 +27,62 @@
         </div>
     </div>
 </div>
+
+<div class="row">
+    <div class="col-4">
+        <div id="list" class="list-group">
+
+        </div>
+    </div>
 </div>
+
+<div class="row">
+    <div class="col-4">
+        <div class="form-group">
+            <label for="text">message</label>
+            <textarea placeholder="message" class="form-control" id="text"></textarea>
+        </div>
+
+        <button type="submit" id="send-room" class="btn btn-primary">room</button>
+    </div>
+</div>
+
+</div>
+
+<script>
+const roomName = location.pathname.split('/').pop();
+const socket = io.connect('/', {query: `roomName=${roomName}`});
+const boxList = document.querySelector('#list');
+const inputText = document.querySelector('#text');
+const sendRoom = document.querySelector('#send-room');
+
+const getTmp = (msg) => {
+    return `
+            <div class="list-group-item list-group-item-action">
+                <div class="d-flex w-100 justify-content-between">
+                    <small>${msg.username}</small>
+                    <small class="text-muted">${msg.type}</small>
+                </div>
+                <p class="mb-1">${msg.text}</p>
+            </div>
+    `;
+};
+
+
+socket.on('message-to-room', (msg) => {
+    const div = getTmp(msg);
+    boxList.insertAdjacentHTML('beforeend', div);
+
+});
+
+sendRoom.addEventListener('click', () => {
+    
+    
+    socket.emit('message-to-room', {
+        text: inputText.value,
+    });
+});
+
+</script>
+
 <%- include("../partials/layout-end") %>

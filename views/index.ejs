@@ -6,5 +6,19 @@
         <h1 class="display-4"><%= title %></h1>
     </div>
 </div>
+<script src="/socket.io/socket.io.js"></script>
+<script>
+  const socket = io();
+  const socketIdSpan = document.getElementsByName("pass");
+  const usernameSpan = document.getElementsByName("login");
+
+  socket.on('connect', () => {
+    socketIdSpan.innerText = socket.id;
+
+    socket.emit('whoami', (login) => {
+      usernameSpan.innerText = login;
+    });
+  });
+</script>
 
 <%- include("./partials/layout-end") %>
